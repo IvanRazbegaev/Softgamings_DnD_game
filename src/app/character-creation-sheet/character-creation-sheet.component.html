@@ -1,0 +1,11 @@
+<form [formGroup]="form">
+  <p >
+    Strength:
+    <input formControlName="strength"
+           min="0"
+           max="20">
+    <button (click)="addPoint('strength')">Add point</button>
+    <button (click)="subtractPoint('strength')">Subtract point</button>
+  </p>
+</form>
+
