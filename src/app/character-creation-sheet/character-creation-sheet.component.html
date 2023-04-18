@@ -1,11 +1,45 @@
 <form [formGroup]="form">
   <p >
     Strength:
-    <input formControlName="strength"
-           min="0"
-           max="20">
+    <input formControlName="strength">
+    <input formControlName="strengthModificator" [value]="calculateModificator('strength')">
     <button (click)="addPoint('strength')">Add point</button>
     <button (click)="subtractPoint('strength')">Subtract point</button>
+  </p>
+  <p >
+    Dexterity:
+    <input formControlName="dexterity">
+    <input formControlName="dexterityModificator" [value]="calculateModificator('dexterity')">
+    <button (click)="addPoint('dexterity')">Add point</button>
+    <button (click)="subtractPoint('dexterity')">Subtract point</button>
+  </p>
+  <p >
+    Constitution:
+    <input formControlName="constitution">
+    <input formControlName="constitutionModificator" [value]="calculateModificator('constitution')">
+    <button (click)="addPoint('constitution')">Add point</button>
+    <button (click)="subtractPoint('constitution')">Subtract point</button>
+  </p>
+  <p >
+    Intellect:
+    <input formControlName="intellect">
+    <input formControlName="intellectModificator" [value]="calculateModificator('intellect')">
+    <button (click)="addPoint('intellect')">Add point</button>
+    <button (click)="subtractPoint('intellect')">Subtract point</button>
+  </p>
+  <p >
+    Wisdom:
+    <input formControlName="wisdom">
+    <input formControlName="wisdomModificator" [value]="calculateModificator('wisdom')">
+    <button (click)="addPoint('wisdom')">Add point</button>
+    <button (click)="subtractPoint('wisdom')">Subtract point</button>
+  </p>
+  <p >
+    Charisma:
+    <input formControlName="charisma">
+    <input formControlName="charismaModificator" [value]="calculateModificator('charisma')">
+    <button (click)="addPoint('charisma')">Add point</button>
+    <button (click)="subtractPoint('charisma')">Subtract point</button>
   </p>
 </form>
 
