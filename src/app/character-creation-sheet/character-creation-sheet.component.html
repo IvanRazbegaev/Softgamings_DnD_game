@@ -1,49 +1,241 @@
+<h2>General Information</h2>
+<form [formGroup]="generalInformation">
+  <mat-form-field appearance="outline">
+    <mat-label>Level:</mat-label>
+    <input matInput readonly formControlName="level" />
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Name:</mat-label>
+    <input matInput formControlName="name" />
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Race:</mat-label>
+    <input matInput formControlName="race" />
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Character Class:</mat-label>
+    <mat-select formControlName="characterClass">
+      <mat-option *ngFor="let charClass of classes" [value]="charClass">
+        {{charClass.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Max Hit Points:</mat-label>
+    <input matInput readonly formControlName="maxHp" [value]="characterHpHandler()"/>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Proficiency Bonus:</mat-label>
+    <input matInput readonly formControlName="proficiencyBonus" [value]="getProficiencyBonusValue()"/>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Armor Class:</mat-label>
+    <input matInput readonly formControlName="armorClass" [value]="getArmorClassValue()"/>
+  </mat-form-field>
+</form>
+
+<h3> Main Characteristics </h3>
 <form [formGroup]="form">
-  <p >
-    Strength:
-    <input formControlName="strength">
-    <input formControlName="strengthModificator" [value]="calculateModificator('strength')">
-    <button (click)="addPoint('strength')">+</button>
-    <button (click)="subtractPoint('strength')">-</button>
-  </p>
-  <p >
-    Dexterity:
-    <input formControlName="dexterity">
-    <input formControlName="dexterityModificator" [value]="calculateModificator('dexterity')">
-    <button (click)="addPoint('dexterity')">+</button>
-    <button (click)="subtractPoint('dexterity')">-</button>
-  </p>
-  <p >
-    Constitution:
-    <input formControlName="constitution">
-    <input formControlName="constitutionModificator" [value]="calculateModificator('constitution')">
-    <button (click)="addPoint('constitution')">+</button>
-    <button (click)="subtractPoint('constitution')">-</button>
-  </p>
-  <p >
-    Intellect:
-    <input formControlName="intellect">
-    <input formControlName="intellectModificator" [value]="calculateModificator('intellect')">
-    <button (click)="addPoint('intellect')">+</button>
-    <button (click)="subtractPoint('intellect')">-</button>
-  </p>
-  <p >
-    Wisdom:
-    <input formControlName="wisdom">
-    <input formControlName="wisdomModificator" [value]="calculateModificator('wisdom')">
-    <button (click)="addPoint('wisdom')">+</button>
-    <button (click)="subtractPoint('wisdom')">-</button>
-  </p>
-  <p >
-    Charisma:
-    <input formControlName="charisma">
-    <input formControlName="charismaModificator" [value]="calculateModificator('charisma')">
-    <button (click)="addPoint('charisma')">+</button>
-    <button (click)="subtractPoint('charisma')">-</button>
-  </p>
-  <p >
-    Points left:
-    <input formControlName="pointsBuy">
-  </p>
+  <mat-form-field appearance="outline">
+    <mat-label>Strength:</mat-label>
+    <input matInput readonly formControlName="strength">
+    <input matInput readonly formControlName="strengthModificator" [value]="calculateModificator('strength')">
+    <input matInput readonly formControlName="strengthPointsSpendTotal" [value]="calculatePointsSpend('strength')">
+
+    <button mat-raised-button
+      (click)="addPoint('strength')"
+      [disabled]="addButtonHandler('strength')">+
+    </button>
+    <button mat-raised-button
+      (click)="subtractPoint('strength')"
+      [disabled]="subtractButtonHandler('strength')">-
+    </button>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Dexterity:</mat-label>
+    <input matInput readonly formControlName="dexterity">
+    <input matInput  readonly formControlName="dexterityModificator"
+           [value]="calculateModificator('dexterity')">
+    <input matInput readonly formControlName="dexterityPointsSpendTotal"
+           [value]="calculatePointsSpend('dexterity')">
+
+    <button mat-raised-button
+      (click)="addPoint('dexterity')"
+      [disabled]="addButtonHandler('dexterity')">+
+    </button>
+    <button mat-raised-button
+      (click)="subtractPoint('dexterity')"
+      [disabled]="subtractButtonHandler('dexterity')">-
+    </button>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Constitution:</mat-label>
+    <input matInput readonly formControlName="constitution">
+    <input matInput readonly formControlName="constitutionModificator"
+           [value]="calculateModificator('constitution')">
+    <input matInput readonly formControlName="constitutionPointsSpendTotal"
+           [value]="calculatePointsSpend('constitution')">
+
+    <button mat-raised-button
+      (click)="addPoint('constitution')"
+      [disabled]="addButtonHandler('constitution')">+
+    </button>
+    <button mat-raised-button
+      (click)="subtractPoint('constitution')"
+      [disabled]="subtractButtonHandler('constitution')">-
+    </button>
+  </mat-form-field >
+  <mat-form-field appearance="outline">
+    <mat-label>Intellect:</mat-label>
+    <input matInput readonly formControlName="intellect">
+    <input matInput readonly formControlName="intellectModificator"
+           [value]="calculateModificator('intellect')">
+    <input matInput readonly formControlName="intellectPointsSpendTotal"
+           [value]="calculatePointsSpend('intellect')">
+
+    <button mat-raised-button
+      (click)="addPoint('intellect')"
+      [disabled]="addButtonHandler('intellect')">+
+    </button>
+    <button mat-raised-button
+      (click)="subtractPoint('intellect')"
+      [disabled]="subtractButtonHandler('intellect')">-
+    </button>
+  </mat-form-field >
+  <mat-form-field appearance="outline">
+    <mat-label>Wisdom:</mat-label>
+    <input matInput readonly formControlName="wisdom">
+    <input matInput readonly formControlName="wisdomModificator"
+           [value]="calculateModificator('wisdom')">
+    <input matInput readonly formControlName="wisdomPointsSpendTotal"
+           [value]="calculatePointsSpend('wisdom')">
+
+    <button mat-raised-button
+      (click)="addPoint('wisdom')"
+      [disabled]="addButtonHandler('wisdom')">+
+    </button>
+    <button mat-raised-button
+      (click)="subtractPoint('wisdom')"
+      [disabled]="subtractButtonHandler('wisdom')">-
+    </button>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Charisma:</mat-label>
+    <input matInput readonly formControlName="charisma">
+    <input matInput readonly formControlName="charismaModificator"
+           [value]="calculateModificator('charisma')">
+    <input matInput readonly formControlName="charismaPointsSpendTotal"
+           [value]="calculatePointsSpend('charisma')">
+
+    <button mat-raised-button
+      (click)="addPoint('charisma')"
+      [disabled]="addButtonHandler('charisma')">+
+    </button>
+    <button mat-raised-button
+      (click)="subtractPoint('charisma')"
+      [disabled]="subtractButtonHandler('charisma')">-
+    </button>
+  </mat-form-field >
+  <mat-form-field appearance="outline">
+    <mat-label>Points left:</mat-label>
+    <input matInput readonly formControlName="pointsBuy">
+  </mat-form-field >
+
+  <h2> Skills </h2>
+  <h4>Strength based:</h4>
+  <mat-form-field>
+    <mat-label>Athletics:</mat-label>
+    <input matInput readonly formControlName="athletics"
+           [value]="calculateModificator('strength')">
+  </mat-form-field>
+  <h4>Dexterity based:</h4>
+  <mat-form-field>
+    <mat-label>Acrobatics:</mat-label>
+    <input matInput readonly formControlName="acrobatics"
+           [value]="calculateModificator('dexterity')">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Sleight of Hand:</mat-label>
+    <input matInput readonly formControlName="sleightOfHand"
+           [value]="calculateModificator('dexterity')">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Stealth:</mat-label>
+    <input matInput readonly formControlName="stealth"
+           [value]="calculateModificator('dexterity')">
+  </mat-form-field>
+  <h4>Intelligence based:</h4>
+  <mat-form-field>
+    <mat-label>Arcana:</mat-label>
+    <input matInput readonly formControlName="arcana"
+           [value]="calculateModificator('intellect')">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>History:</mat-label>
+    <input matInput readonly formControlName="history"
+           [value]="calculateModificator('intellect')">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Investigation:</mat-label>
+    <input matInput readonly formControlName="investigation"
+           [value]="calculateModificator('intellect')">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Nature:</mat-label>
+    <input matInput readonly formControlName="nature"
+           [value]="calculateModificator('intellect')">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Religion::</mat-label>
+    <input matInput readonly formControlName="religion"
+           [value]="calculateModificator('intellect')">
+  </mat-form-field>
+  <h4>Wisdom based:</h4>
+  <mat-form-field>
+    <mat-label>Animal Handling:</mat-label>
+    <input matInput readonly formControlName="animalHandling"
+           [value]="calculateModificator('wisdom')">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Insight:</mat-label>
+    <input matInput readonly formControlName="insight"
+           [value]="calculateModificator('wisdom')">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Medicine:</mat-label>
+    <input matInput readonly formControlName="medicine"
+           [value]="calculateModificator('wisdom')">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Perception:</mat-label>
+    <input matInput readonly formControlName="perception"
+           [value]="calculateModificator('wisdom')">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Survival:</mat-label>
+    <input matInput readonly formControlName="survival"
+           [value]="calculateModificator('wisdom')">
+  </mat-form-field>
+  <h4>Charisma based:</h4>
+  <mat-form-field>
+    <mat-label>Deception:</mat-label>
+    <input matInput readonly formControlName="deception"
+           [value]="calculateModificator('charisma')">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Intimidation:</mat-label>
+    <input matInput readonly formControlName="intimidation"
+           [value]="calculateModificator('charisma')">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Performance:</mat-label>
+    <input matInput readonly formControlName="performance"
+           [value]="calculateModificator('charisma')">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Persuasion:</mat-label>
+    <input matInput readonly formControlName="persuasion"
+           [value]="calculateModificator('charisma')">
+  </mat-form-field>
 </form>
 
