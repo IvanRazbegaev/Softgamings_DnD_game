@@ -2,15 +2,27 @@
 <form [formGroup]="generalInformation">
   <mat-form-field appearance="outline">
     <mat-label>Level:</mat-label>
-    <input matInput readonly formControlName="level" />
+    <input matInput readonly formControlName="level"/>
   </mat-form-field>
   <mat-form-field appearance="outline">
     <mat-label>Name:</mat-label>
-    <input matInput formControlName="name" />
+    <input matInput formControlName="name"/>
   </mat-form-field>
   <mat-form-field appearance="outline">
     <mat-label>Race:</mat-label>
-    <input matInput formControlName="race" />
+    <mat-select formControlName="race">
+      <mat-option *ngFor="let charRace of races" [value]="charRace">
+        {{charRace.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline" *ngIf="generalInformation.get('race')?.value.name === 'Dragonborn'">
+    <mat-label>Draconic Ancestry:</mat-label>
+    <mat-select formControlName="draconicAncestry">
+      <mat-option *ngFor="let ancestry of draconicAncestry" [value]="ancestry">
+        {{ancestry}}
+      </mat-option>
+    </mat-select>
   </mat-form-field>
   <mat-form-field appearance="outline">
     <mat-label>Character Class:</mat-label>
@@ -32,6 +44,38 @@
     <mat-label>Armor Class:</mat-label>
     <input matInput readonly formControlName="armorClass" [value]="getArmorClassValue()"/>
   </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Initiative:</mat-label>
+    <input matInput readonly formControlName="initiative" [value]="getInitiativeValue()"/>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Speed:</mat-label>
+    <input matInput readonly formControlName="speed" [value]="getChosenRaceSpeed()"/>
+  </mat-form-field>
+
+  <button mat-raised-button>
+    <mat-icon svgIcon="spellbook"></mat-icon>
+    Spell book
+  </button>
+
+  <h3>Saving Throws</h3>
+  <table mat-table [dataSource]="dataSource">
+
+    <!-- Characteristic Column -->
+    <ng-container matColumnDef="Characteristic">
+      <th mat-header-cell *matHeaderCellDef> Characteristic </th>
+      <td mat-cell *matCellDef="let element"> {{element.characteristicName}} </td>
+    </ng-container>
+
+    <!-- Modifier Column -->
+    <ng-container matColumnDef="Modifier">
+      <th mat-header-cell *matHeaderCellDef> Modifier </th>
+      <td mat-cell *matCellDef="let element"> {{element.savingThrowModifier}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
 </form>
 
 <h3> Main Characteristics </h3>
@@ -43,29 +87,29 @@
     <input matInput readonly formControlName="strengthPointsSpendTotal" [value]="calculatePointsSpend('strength')">
 
     <button mat-raised-button
-      (click)="addPoint('strength')"
-      [disabled]="addButtonHandler('strength')">+
+            (click)="addPoint('strength')"
+            [disabled]="addButtonHandler('strength')">+
     </button>
     <button mat-raised-button
-      (click)="subtractPoint('strength')"
-      [disabled]="subtractButtonHandler('strength')">-
+            (click)="subtractPoint('strength')"
+            [disabled]="subtractButtonHandler('strength')">-
     </button>
   </mat-form-field>
   <mat-form-field appearance="outline">
     <mat-label>Dexterity:</mat-label>
     <input matInput readonly formControlName="dexterity">
-    <input matInput  readonly formControlName="dexterityModificator"
+    <input matInput readonly formControlName="dexterityModificator"
            [value]="calculateModificator('dexterity')">
     <input matInput readonly formControlName="dexterityPointsSpendTotal"
            [value]="calculatePointsSpend('dexterity')">
 
     <button mat-raised-button
-      (click)="addPoint('dexterity')"
-      [disabled]="addButtonHandler('dexterity')">+
+            (click)="addPoint('dexterity')"
+            [disabled]="addButtonHandler('dexterity')">+
     </button>
     <button mat-raised-button
-      (click)="subtractPoint('dexterity')"
-      [disabled]="subtractButtonHandler('dexterity')">-
+            (click)="subtractPoint('dexterity')"
+            [disabled]="subtractButtonHandler('dexterity')">-
     </button>
   </mat-form-field>
   <mat-form-field appearance="outline">
@@ -77,14 +121,14 @@
            [value]="calculatePointsSpend('constitution')">
 
     <button mat-raised-button
-      (click)="addPoint('constitution')"
-      [disabled]="addButtonHandler('constitution')">+
+            (click)="addPoint('constitution')"
+            [disabled]="addButtonHandler('constitution')">+
     </button>
     <button mat-raised-button
-      (click)="subtractPoint('constitution')"
-      [disabled]="subtractButtonHandler('constitution')">-
+            (click)="subtractPoint('constitution')"
+            [disabled]="subtractButtonHandler('constitution')">-
     </button>
-  </mat-form-field >
+  </mat-form-field>
   <mat-form-field appearance="outline">
     <mat-label>Intellect:</mat-label>
     <input matInput readonly formControlName="intellect">
@@ -94,14 +138,14 @@
            [value]="calculatePointsSpend('intellect')">
 
     <button mat-raised-button
-      (click)="addPoint('intellect')"
-      [disabled]="addButtonHandler('intellect')">+
+            (click)="addPoint('intellect')"
+            [disabled]="addButtonHandler('intellect')">+
     </button>
     <button mat-raised-button
-      (click)="subtractPoint('intellect')"
-      [disabled]="subtractButtonHandler('intellect')">-
+            (click)="subtractPoint('intellect')"
+            [disabled]="subtractButtonHandler('intellect')">-
     </button>
-  </mat-form-field >
+  </mat-form-field>
   <mat-form-field appearance="outline">
     <mat-label>Wisdom:</mat-label>
     <input matInput readonly formControlName="wisdom">
@@ -111,12 +155,12 @@
            [value]="calculatePointsSpend('wisdom')">
 
     <button mat-raised-button
-      (click)="addPoint('wisdom')"
-      [disabled]="addButtonHandler('wisdom')">+
+            (click)="addPoint('wisdom')"
+            [disabled]="addButtonHandler('wisdom')">+
     </button>
     <button mat-raised-button
-      (click)="subtractPoint('wisdom')"
-      [disabled]="subtractButtonHandler('wisdom')">-
+            (click)="subtractPoint('wisdom')"
+            [disabled]="subtractButtonHandler('wisdom')">-
     </button>
   </mat-form-field>
   <mat-form-field appearance="outline">
@@ -128,18 +172,18 @@
            [value]="calculatePointsSpend('charisma')">
 
     <button mat-raised-button
-      (click)="addPoint('charisma')"
-      [disabled]="addButtonHandler('charisma')">+
+            (click)="addPoint('charisma')"
+            [disabled]="addButtonHandler('charisma')">+
     </button>
     <button mat-raised-button
-      (click)="subtractPoint('charisma')"
-      [disabled]="subtractButtonHandler('charisma')">-
+            (click)="subtractPoint('charisma')"
+            [disabled]="subtractButtonHandler('charisma')">-
     </button>
-  </mat-form-field >
+  </mat-form-field>
   <mat-form-field appearance="outline">
     <mat-label>Points left:</mat-label>
     <input matInput readonly formControlName="pointsBuy">
-  </mat-form-field >
+  </mat-form-field>
 
   <h2> Skills </h2>
   <h4>Strength based:</h4>
