@@ -4,6 +4,8 @@ import {IClasses} from "../abstract_classes/iclasses";
 import {IRace} from "../abstract_classes/irace";
 import {MatIconRegistry} from "@angular/material/icon";
 import {DomSanitizer} from "@angular/platform-browser";
+import {MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {SpellbookComponent} from "../spellbook/spellbook.component";
 
 const SPELLBOOK_SVG = `<?xml version="1.0" encoding="iso-8859-1"?>
 <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
@@ -234,7 +236,7 @@ export class CharacterCreationSheetComponent implements OnInit {
     'White',
   ];
 
-  constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
+  constructor(private dialog: MatDialog, iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
     iconRegistry.addSvgIconLiteral('spellbook', sanitizer.bypassSecurityTrustHtml(SPELLBOOK_SVG));
   }
 
@@ -285,6 +287,7 @@ export class CharacterCreationSheetComponent implements OnInit {
     this.generalInformation.get('level')?.setValue(this.characterLevel)
     this.generalInformation.get('name')?.setValue('')
     this.generalInformation.get('race')?.setValue('')
+    this.generalInformation.get('draconicAncestry')?.setValue('')
     this.generalInformation.get('maxHp')?.setValue(this.characterHpHandler())
     this.generalInformation.get('proficiencyBonus')?.setValue(this.getProficiencyBonusValue())
     this.generalInformation.get('armorClass')?.setValue(this.getArmorClassValue())
@@ -454,5 +457,31 @@ export class CharacterCreationSheetComponent implements OnInit {
   getChosenRaceSpeed(): number {
     const chosenRace = this.generalInformation.get('race')?.value;
     return chosenRace.speed
+  }
+
+  dragonAncestryHandleValidator(){
+    const race = this.generalInformation.get('race')?.value.name
+    if(race === 'Dragonborn'){
+      this.generalInformation.controls['draconicAncestry'].setValidators([Validators.required])
+    } else {
+      this.generalInformation.controls['draconicAncestry'].removeValidators([Validators.required])
+    }
+  }
+
+  openSpellbook(enterAnimationDuration: string, exitAnimationDuration: string) {
+    let dialogRef: MatDialogRef<SpellbookComponent>;
+    const data = this.generalInformation.value
+    if(this.generalInformation.valid){
+      dialogRef = this.dialog.open(SpellbookComponent, {
+        data,
+        enterAnimationDuration,
+        exitAnimationDuration
+      })
+      const sub = dialogRef.afterClosed()
+        .subscribe(value => {
+          sub.unsubscribe()
+          console.log(value)
+        })
+    }
   }
 }

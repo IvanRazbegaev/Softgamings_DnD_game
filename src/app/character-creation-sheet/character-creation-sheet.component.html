@@ -10,7 +10,7 @@
   </mat-form-field>
   <mat-form-field appearance="outline">
     <mat-label>Race:</mat-label>
-    <mat-select formControlName="race">
+    <mat-select formControlName="race" (selectionChange)="dragonAncestryHandleValidator()">
       <mat-option *ngFor="let charRace of races" [value]="charRace">
         {{charRace.name}}
       </mat-option>
@@ -53,7 +53,7 @@
     <input matInput readonly formControlName="speed" [value]="getChosenRaceSpeed()"/>
   </mat-form-field>
 
-  <button mat-raised-button>
+  <button mat-raised-button (click)="openSpellbook('3000', '3000')">
     <mat-icon svgIcon="spellbook"></mat-icon>
     Spell book
   </button>

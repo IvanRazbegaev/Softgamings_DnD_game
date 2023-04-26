@@ -11,11 +11,16 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatButtonModule} from "@angular/material/button";
 import {MatTableModule} from "@angular/material/table";
 import {MatIconModule} from "@angular/material/icon";
+import { SpellbookComponent } from './spellbook/spellbook.component';
+import {MatDialogModule} from "@angular/material/dialog";
+import { SpellPipe } from './pipes/spell.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
-    CharacterCreationSheetComponent
+    CharacterCreationSheetComponent,
+    SpellbookComponent,
+    SpellPipe
   ],
   imports: [
     BrowserModule,
@@ -27,7 +32,8 @@ import {MatIconModule} from "@angular/material/icon";
     BrowserAnimationsModule,
     MatButtonModule,
     MatTableModule,
-    MatIconModule
+    MatIconModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]

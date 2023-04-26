@@ -1,0 +1,92 @@
+<h2 mat-dialog-title> Spellbook </h2>
+<h3>Race Spells</h3>
+<mat-dialog-content>
+  <table mat-table [dataSource]="raceSpellsData">
+    Race Spells
+    <!-- Selected Column -->
+    <ng-container matColumnDef="Selected">
+      <th mat-header-cell *matHeaderCellDef> </th>
+      <td mat-cell *matCellDef="let element"></td>
+    </ng-container>
+    <!-- Name Column -->
+    <ng-container matColumnDef="Name">
+      <th mat-header-cell *matHeaderCellDef>Spell Name</th>
+      <td mat-cell *matCellDef="let element">{{element.spellName}}</td>
+    </ng-container>
+    <!-- Description Column -->
+    <ng-container matColumnDef="Description">
+      <th mat-header-cell *matHeaderCellDef>Description</th>
+      <td mat-cell *matCellDef="let element">{{element.description}}</td>
+    </ng-container>
+    <!-- Damage Column -->
+    <ng-container matColumnDef="Damage">
+      <th mat-header-cell *matHeaderCellDef>Damage</th>
+      <td mat-cell *matCellDef="let element">{{element.Damage.amount + element.Damage.dice + ' ' + element.DamageType }}</td>
+    </ng-container>
+    <!-- AoE Column -->
+    <ng-container matColumnDef="AoE">
+      <th mat-header-cell *matHeaderCellDef>Area of Effect</th>
+      <td mat-cell *matCellDef="let element">{{element.areaOfEffect}}</td>
+    </ng-container>
+    <!-- Range Column -->
+    <ng-container matColumnDef="Range">
+      <th mat-header-cell *matHeaderCellDef>Range</th>
+      <td mat-cell *matCellDef="let element">{{element.range | spell: 'range' }}</td>
+    </ng-container>
+    <!-- Ingredients Column -->
+    <ng-container matColumnDef="Ingredients">
+      <th mat-header-cell *matHeaderCellDef>Ingredients</th>
+      <td mat-cell *matCellDef="let element">{{element.ingredients}}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</mat-dialog-content>
+<h3>Class Spells</h3>
+<mat-dialog-content>
+  <table mat-table [dataSource]="classSpellsData">
+    Race Spells
+    <!-- Selected Column -->
+    <ng-container matColumnDef="Selected">
+      <th mat-header-cell *matHeaderCellDef> </th>
+      <td mat-cell *matCellDef="let element"></td>
+    </ng-container>
+    <!-- Name Column -->
+    <ng-container matColumnDef="Name">
+      <th mat-header-cell *matHeaderCellDef>Spell Name</th>
+      <td mat-cell *matCellDef="let element">{{element.spellName}}</td>
+    </ng-container>
+    <!-- Description Column -->
+    <ng-container matColumnDef="Description">
+      <th mat-header-cell *matHeaderCellDef>Description</th>
+      <td mat-cell *matCellDef="let element">{{element.description}}</td>
+    </ng-container>
+    <!-- Damage Column -->
+    <ng-container matColumnDef="Damage">
+      <th mat-header-cell *matHeaderCellDef>Damage</th>
+      <td mat-cell *matCellDef="let element">{{element.activeEffect.damage | spell: 'damage'}}</td>
+    </ng-container>
+    <!-- AoE Column -->
+    <ng-container matColumnDef="AoE">
+      <th mat-header-cell *matHeaderCellDef>Area of Effect</th>
+      <td mat-cell *matCellDef="let element">{{element.areaOfEffect | spell: "aoe"}}</td>
+    </ng-container>
+    <!-- Range Column -->
+    <ng-container matColumnDef="Range">
+      <th mat-header-cell *matHeaderCellDef>Range</th>
+      <td mat-cell *matCellDef="let element">{{element.range | spell: 'range' }}</td>
+    </ng-container>
+    <!-- Ingredients Column -->
+    <ng-container matColumnDef="Ingredients">
+      <th mat-header-cell *matHeaderCellDef>Ingredients</th>
+      <td mat-cell *matCellDef="let element">{{element.ingredients}}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button>Close</button>
+</mat-dialog-actions>
