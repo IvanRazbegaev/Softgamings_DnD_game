@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {IClasses} from "../abstract_classes/iclasses";
-import {IRace} from "../abstract_classes/irace";
+import {IMainCharacteristics, IRace} from "../abstract_classes/irace";
 import {MatIconRegistry} from "@angular/material/icon";
 import {DomSanitizer} from "@angular/platform-browser";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
@@ -139,7 +139,6 @@ export class CharacterCreationSheetComponent implements OnInit {
     armorClass: new UntypedFormControl({value: null}),
     initiative: new UntypedFormControl({value: null}),
     speed: new UntypedFormControl({value: null}),
-    draconicAncestry: new UntypedFormControl({value: null}),
   })
 
   form: UntypedFormGroup = new UntypedFormGroup({
@@ -195,6 +194,18 @@ export class CharacterCreationSheetComponent implements OnInit {
   currentPointsBuyValue: number = 0
 
   characterLevel: number = 1;
+  selectedRace: {name: string, speed: number, bonusStats:IMainCharacteristics} = {
+    name: '',
+    speed: 0,
+    bonusStats: {
+      strength: 0,
+      dexterity: 0,
+      constitution: 0,
+      intellect: 0,
+      wisdom: 0,
+      charisma: 0
+    }
+  };
   classes: IClasses[] = [
     {name: 'Barbarian', hitDie: 'd12', initialHp: 12},
     {name: 'Bard', hitDie: 'd8', initialHp: 8},
@@ -213,27 +224,74 @@ export class CharacterCreationSheetComponent implements OnInit {
   displayedColumns: string[] = ['Characteristic', 'Modifier'];
   dataSource: {characteristicName: string, savingThrowModifier: number}[] = [];
   races: IRace[] = [
-    {name: 'Dragonborn', speed: 30},
-    {name: 'Dwarf', speed: 25},
-    {name: 'Elf', speed: 30},
-    {name: 'Gnome', speed: 25},
-    {name: 'Half-Elf', speed: 30},
-    {name: 'Half-Orc', speed: 30},
-    {name: 'Halfling', speed: 25},
-    {name: 'Human', speed: 30},
-    {name: 'Tiefling', speed: 30},
-  ];
-  draconicAncestry: string[] = [
-    'Black',
-    'Blue',
-    'Brass',
-    'Bronze',
-    'Copper',
-    'Gold',
-    'Green',
-    'Red',
-    'Silver',
-    'White',
+    {
+      name: 'Dragonborn',
+      subRace:[
+        {name: 'Dragonborn (Black)', speed: 30, bonusStats:{strength:2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
+        {name: 'Dragonborn (Blue)', speed: 30, bonusStats:{strength:2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
+        {name: 'Dragonborn (Brass)', speed: 30, bonusStats:{strength:2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
+        {name: 'Dragonborn (Bronze)', speed: 30, bonusStats:{strength:2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
+        {name: 'Dragonborn (Copper)', speed: 30, bonusStats:{strength:2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
+        {name: 'Dragonborn (Gold)', speed: 30, bonusStats:{strength:2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
+        {name: 'Dragonborn (Green)', speed: 30, bonusStats:{strength:2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
+        {name: 'Dragonborn (Red)', speed: 30, bonusStats:{strength:2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
+        {name: 'Dragonborn (Silver)', speed: 30, bonusStats:{strength:2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
+        {name: 'Dragonborn (White)', speed: 30, bonusStats:{strength:2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
+      ]
+    },
+    {
+      name: 'Dwarf',
+      subRace:[
+        {name: 'Hill Dwarf', speed: 25, bonusStats:{strength:0, dexterity: 0, constitution: 2, intellect: 0, wisdom: 1, charisma: 0}},
+        {name: 'Mountain Dwarf', speed: 25, bonusStats:{strength:2, dexterity: 0, constitution: 2, intellect: 0, wisdom: 0, charisma: 0}},
+      ]
+    },
+    {
+      name: 'Elf',
+      subRace:[
+        {name: 'High Elf', speed: 30, bonusStats:{strength:0, dexterity: 2, constitution: 0, intellect: 1, wisdom: 0, charisma: 0}},
+        {name: 'Wood Elf', speed: 30, bonusStats:{strength:0, dexterity: 2, constitution: 0, intellect: 0, wisdom: 1, charisma: 0}},
+        {name: 'Drow Elf', speed: 30, bonusStats:{strength:0, dexterity: 2, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
+      ]
+    },
+    {
+      name: 'Gnome',
+      subRace:[
+        {name: 'Forest Gnome', speed: 25, bonusStats:{strength:0, dexterity: 1, constitution: 0, intellect: 2, wisdom: 0, charisma: 0}},
+        {name: 'Rock Gnome', speed: 25, bonusStats:{strength:0, dexterity: 0, constitution: 1, intellect: 2, wisdom: 0, charisma: 0}},
+      ]
+    },
+    {
+      name: 'Half-Elf',
+      subRace:[
+        {name: 'Half-Elf', speed: 30, bonusStats:{strength:0, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 2}},
+      ]
+    },
+    {
+      name: 'Half-Orc',
+      subRace:[
+        {name: 'Half-Orc', speed: 30, bonusStats:{strength:2, dexterity: 0, constitution: 1, intellect: 0, wisdom: 0, charisma: 0}},
+      ]
+    },
+    {
+      name: 'Halfling',
+      subRace:[
+        {name: 'Lightfoot Halfling', speed: 25, bonusStats:{strength:0, dexterity: 2, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
+        {name: 'Stout Halfling', speed: 25, bonusStats:{strength:0, dexterity: 2, constitution: 1, intellect: 0, wisdom: 0, charisma: 0}},
+      ]
+    },
+    {
+      name: 'Human',
+      subRace:[
+        {name: 'Human', speed: 30, bonusStats:{strength:1, dexterity: 1, constitution: 1, intellect: 1, wisdom: 1, charisma: 1}},
+      ]
+    },
+    {
+      name: 'Tiefling',
+      subRace:[
+        {name: 'Tiefling', speed: 30, bonusStats:{strength:0, dexterity: 0, constitution: 1, intellect: 0, wisdom: 0, charisma: 2}},
+      ]
+    },
   ];
 
   constructor(private dialog: MatDialog, iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
@@ -287,7 +345,6 @@ export class CharacterCreationSheetComponent implements OnInit {
     this.generalInformation.get('level')?.setValue(this.characterLevel)
     this.generalInformation.get('name')?.setValue('')
     this.generalInformation.get('race')?.setValue('')
-    this.generalInformation.get('draconicAncestry')?.setValue('')
     this.generalInformation.get('maxHp')?.setValue(this.characterHpHandler())
     this.generalInformation.get('proficiencyBonus')?.setValue(this.getProficiencyBonusValue())
     this.generalInformation.get('armorClass')?.setValue(this.getArmorClassValue())
@@ -326,8 +383,13 @@ export class CharacterCreationSheetComponent implements OnInit {
     this.dataSource = this.getSavingThrowsModifiers();
   }
 
-  calculateModificator(characteristic: string): number {
-    const currentModificatorValue = this.form.get(characteristic)!.value
+  calculateModificator(characteristic: string, savingThrow?: boolean): number {
+    let currentModificatorValue: number= 0
+    if(savingThrow){
+      currentModificatorValue = this.characteristicWithRaceModifier(characteristic)
+    } else {
+      currentModificatorValue = this.form.get(characteristic)!.value
+    }
     return Math.floor((currentModificatorValue - 10) / 2)
   }
 
@@ -445,27 +507,17 @@ export class CharacterCreationSheetComponent implements OnInit {
 
   getSavingThrowsModifiers(): {characteristicName: string, savingThrowModifier: number}[] {
     return [
-      {characteristicName: 'STR', savingThrowModifier: this.calculateModificator('strength')},
-      {characteristicName: 'DEX', savingThrowModifier: this.calculateModificator('dexterity')},
-      {characteristicName: 'CON', savingThrowModifier: this.calculateModificator('constitution')},
-      {characteristicName: 'INT', savingThrowModifier: this.calculateModificator('intellect')},
-      {characteristicName: 'WIS', savingThrowModifier: this.calculateModificator('wisdom')},
-      {characteristicName: 'CHA', savingThrowModifier: this.calculateModificator('charisma')}
+      {characteristicName: 'STR', savingThrowModifier: this.calculateModificator('strength', true)},
+      {characteristicName: 'DEX', savingThrowModifier: this.calculateModificator('dexterity', true)},
+      {characteristicName: 'CON', savingThrowModifier: this.calculateModificator('constitution', true)},
+      {characteristicName: 'INT', savingThrowModifier: this.calculateModificator('intellect', true)},
+      {characteristicName: 'WIS', savingThrowModifier: this.calculateModificator('wisdom', true)},
+      {characteristicName: 'CHA', savingThrowModifier: this.calculateModificator('charisma', true)}
     ]
   }
 
   getChosenRaceSpeed(): number {
-    const chosenRace = this.generalInformation.get('race')?.value;
-    return chosenRace.speed
-  }
-
-  dragonAncestryHandleValidator(){
-    const race = this.generalInformation.get('race')?.value.name
-    if(race === 'Dragonborn'){
-      this.generalInformation.controls['draconicAncestry'].setValidators([Validators.required])
-    } else {
-      this.generalInformation.controls['draconicAncestry'].removeValidators([Validators.required])
-    }
+    return this.selectedRace.speed
   }
 
   openSpellbook(enterAnimationDuration: string, exitAnimationDuration: string) {
@@ -483,5 +535,34 @@ export class CharacterCreationSheetComponent implements OnInit {
           console.log(value)
         })
     }
+  }
+
+  characteristicWithRaceModifier(characteristic: string): number {
+    const characteristicValue = this.form.get(characteristic)?.value
+    const bonusCharacteristicValue = this.getRaceModifier(this.selectedRace.name, characteristic)
+    return characteristicValue + bonusCharacteristicValue
+  }
+
+  getRaceModifier(race: string, characteristic: string): number{
+    let selectedRaceBonusStats: IMainCharacteristics = {
+      strength: 0,
+      dexterity: 0,
+      constitution: 0,
+      intellect: 0,
+      wisdom: 0,
+      charisma: 0
+    };
+    for (let i = 0; i < this.races.length; i++) {
+      for (let j = 0; j < this.races[i].subRace.length; j++) {
+        if(this.races[i].subRace[j].name === race){
+          selectedRaceBonusStats = this.races[i].subRace[j].bonusStats
+        }
+      }
+    }
+    return selectedRaceBonusStats[characteristic as keyof IMainCharacteristics]
+  }
+
+  setSelectedRace() {
+    this.selectedRace = this.generalInformation.get('race')?.value
   }
 }
