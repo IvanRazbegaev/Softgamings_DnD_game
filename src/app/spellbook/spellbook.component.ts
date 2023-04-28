@@ -16,10 +16,7 @@ export class SpellbookComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    this.raceSpellsData = RACE_SPELLS.filter(value => value.raceName === this.data.race.name && value.draconicAncestry === this.data.draconicAncestry)
-    console.log(this.data)
-    this.classSpellsData = CLASS_SPELLS.filter(value => value.className === this.data.characterClass.name && value.level === this.data.level)
-    console.log(this.data)
+
   }
 
 }
