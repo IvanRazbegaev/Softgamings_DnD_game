@@ -383,9 +383,13 @@ export class CharacterCreationSheetComponent implements OnInit {
     this.dataSource = this.getSavingThrowsModifiers();
   }
 
-  calculateModificator(characteristic: string): number {
-    const raceCharacteristicModifier = this.getRaceModifier(this.selectedRace.name, characteristic)
-    const currentModificatorValue = this.form.get(characteristic)!.value - raceCharacteristicModifier
+  calculateModificator(characteristic: string, savingThrow?: boolean): number {
+    let currentModificatorValue: number= 0
+    if(savingThrow){
+      currentModificatorValue = this.characteristicWithRaceModifier(characteristic)
+    } else {
+      currentModificatorValue = this.form.get(characteristic)!.value
+    }
     return Math.floor((currentModificatorValue - 10) / 2)
   }
 
@@ -414,8 +418,7 @@ export class CharacterCreationSheetComponent implements OnInit {
 
   calculatePointsSpend(characteristicName: string): number {
     let pointsSpent: number;
-    const raceCharacteristicModifier = this.getRaceModifier(this.selectedRace.name, characteristicName)
-    const currentCharacteristicValue = this.form.get(characteristicName)?.value - raceCharacteristicModifier || 0
+    const currentCharacteristicValue = this.form.get(characteristicName)?.value || 0
     switch (true) {
       case currentCharacteristicValue === 9:
         pointsSpent = 1
@@ -504,12 +507,12 @@ export class CharacterCreationSheetComponent implements OnInit {
 
   getSavingThrowsModifiers(): {characteristicName: string, savingThrowModifier: number}[] {
     return [
-      {characteristicName: 'STR', savingThrowModifier: this.calculateModificator('strength')},
-      {characteristicName: 'DEX', savingThrowModifier: this.calculateModificator('dexterity')},
-      {characteristicName: 'CON', savingThrowModifier: this.calculateModificator('constitution')},
-      {characteristicName: 'INT', savingThrowModifier: this.calculateModificator('intellect')},
-      {characteristicName: 'WIS', savingThrowModifier: this.calculateModificator('wisdom')},
-      {characteristicName: 'CHA', savingThrowModifier: this.calculateModificator('charisma')}
+      {characteristicName: 'STR', savingThrowModifier: this.calculateModificator('strength', true)},
+      {characteristicName: 'DEX', savingThrowModifier: this.calculateModificator('dexterity', true)},
+      {characteristicName: 'CON', savingThrowModifier: this.calculateModificator('constitution', true)},
+      {characteristicName: 'INT', savingThrowModifier: this.calculateModificator('intellect', true)},
+      {characteristicName: 'WIS', savingThrowModifier: this.calculateModificator('wisdom', true)},
+      {characteristicName: 'CHA', savingThrowModifier: this.calculateModificator('charisma', true)}
     ]
   }
 
