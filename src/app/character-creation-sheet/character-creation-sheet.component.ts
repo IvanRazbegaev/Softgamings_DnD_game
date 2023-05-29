@@ -6,6 +6,8 @@ import {MatIconRegistry} from "@angular/material/icon";
 import {DomSanitizer} from "@angular/platform-browser";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {SpellbookComponent} from "../spellbook/spellbook.component";
+import {ItemServiceService} from "../services/item-service.service";
+import {IEquipment, IItems, IWeapons} from "../abstract_classes/items";
 
 const SPELLBOOK_SVG = `<?xml version="1.0" encoding="iso-8859-1"?>
 <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
@@ -184,17 +186,21 @@ export class CharacterCreationSheetComponent implements OnInit {
     performance: new UntypedFormControl({value: null}),
     persuasion: new UntypedFormControl({value: null}),
     acrobatics: new UntypedFormControl({value: null}),
-
-
   });
+
+  equipment: UntypedFormGroup = new UntypedFormGroup({
+    equipmentOptions: new UntypedFormControl({value: null})
+  })
   readonly minCharacteristicValue: number = 8;
   readonly maxCharacteristicValue: number = 15;
 
   readonly maxPointsBuyValue: number = 27
   currentPointsBuyValue: number = 0
 
+  availableItems: IItems[] = [];
+
   characterLevel: number = 1;
-  selectedRace: {name: string, speed: number, bonusStats:IMainCharacteristics} = {
+  selectedRace: { name: string, speed: number, bonusStats: IMainCharacteristics } = {
     name: '',
     speed: 0,
     bonusStats: {
@@ -206,6 +212,21 @@ export class CharacterCreationSheetComponent implements OnInit {
       charisma: 0
     }
   };
+  selectedClass: {name: string, hitDie: string, initialHp: number} = {
+    name: '',
+    hitDie: '',
+    initialHp: 0
+  };
+  equipmentOptions: {optionA: IEquipment[], optionB:{simple: IWeapons[], martial:IWeapons[]}, nonOptionalEquip:IEquipment[]} = {
+    optionA:[],
+    optionB: {simple: [], martial: []},
+    nonOptionalEquip:[]
+  }
+  weaponsArray: {simple: IWeapons[], martial:IWeapons[]} = {
+    simple:[],
+    martial:[]
+  }
+
   classes: IClasses[] = [
     {name: 'Barbarian', hitDie: 'd12', initialHp: 12},
     {name: 'Bard', hitDie: 'd8', initialHp: 8},
@@ -222,83 +243,178 @@ export class CharacterCreationSheetComponent implements OnInit {
   ]
 
   displayedColumns: string[] = ['Characteristic', 'Modifier'];
-  dataSource: {characteristicName: string, savingThrowModifier: number}[] = [];
+  dataSource: { characteristicName: string, savingThrowModifier: number }[] = [];
   races: IRace[] = [
     {
       name: 'Dragonborn',
-      subRace:[
-        {name: 'Dragonborn (Black)', speed: 30, bonusStats:{strength:2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
-        {name: 'Dragonborn (Blue)', speed: 30, bonusStats:{strength:2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
-        {name: 'Dragonborn (Brass)', speed: 30, bonusStats:{strength:2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
-        {name: 'Dragonborn (Bronze)', speed: 30, bonusStats:{strength:2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
-        {name: 'Dragonborn (Copper)', speed: 30, bonusStats:{strength:2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
-        {name: 'Dragonborn (Gold)', speed: 30, bonusStats:{strength:2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
-        {name: 'Dragonborn (Green)', speed: 30, bonusStats:{strength:2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
-        {name: 'Dragonborn (Red)', speed: 30, bonusStats:{strength:2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
-        {name: 'Dragonborn (Silver)', speed: 30, bonusStats:{strength:2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
-        {name: 'Dragonborn (White)', speed: 30, bonusStats:{strength:2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
+      subRace: [
+        {
+          name: 'Dragonborn (Black)',
+          speed: 30,
+          bonusStats: {strength: 2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}
+        },
+        {
+          name: 'Dragonborn (Blue)',
+          speed: 30,
+          bonusStats: {strength: 2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}
+        },
+        {
+          name: 'Dragonborn (Brass)',
+          speed: 30,
+          bonusStats: {strength: 2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}
+        },
+        {
+          name: 'Dragonborn (Bronze)',
+          speed: 30,
+          bonusStats: {strength: 2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}
+        },
+        {
+          name: 'Dragonborn (Copper)',
+          speed: 30,
+          bonusStats: {strength: 2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}
+        },
+        {
+          name: 'Dragonborn (Gold)',
+          speed: 30,
+          bonusStats: {strength: 2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}
+        },
+        {
+          name: 'Dragonborn (Green)',
+          speed: 30,
+          bonusStats: {strength: 2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}
+        },
+        {
+          name: 'Dragonborn (Red)',
+          speed: 30,
+          bonusStats: {strength: 2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}
+        },
+        {
+          name: 'Dragonborn (Silver)',
+          speed: 30,
+          bonusStats: {strength: 2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}
+        },
+        {
+          name: 'Dragonborn (White)',
+          speed: 30,
+          bonusStats: {strength: 2, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}
+        },
       ]
     },
     {
       name: 'Dwarf',
-      subRace:[
-        {name: 'Hill Dwarf', speed: 25, bonusStats:{strength:0, dexterity: 0, constitution: 2, intellect: 0, wisdom: 1, charisma: 0}},
-        {name: 'Mountain Dwarf', speed: 25, bonusStats:{strength:2, dexterity: 0, constitution: 2, intellect: 0, wisdom: 0, charisma: 0}},
+      subRace: [
+        {
+          name: 'Hill Dwarf',
+          speed: 25,
+          bonusStats: {strength: 0, dexterity: 0, constitution: 2, intellect: 0, wisdom: 1, charisma: 0}
+        },
+        {
+          name: 'Mountain Dwarf',
+          speed: 25,
+          bonusStats: {strength: 2, dexterity: 0, constitution: 2, intellect: 0, wisdom: 0, charisma: 0}
+        },
       ]
     },
     {
       name: 'Elf',
-      subRace:[
-        {name: 'High Elf', speed: 30, bonusStats:{strength:0, dexterity: 2, constitution: 0, intellect: 1, wisdom: 0, charisma: 0}},
-        {name: 'Wood Elf', speed: 30, bonusStats:{strength:0, dexterity: 2, constitution: 0, intellect: 0, wisdom: 1, charisma: 0}},
-        {name: 'Drow Elf', speed: 30, bonusStats:{strength:0, dexterity: 2, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
+      subRace: [
+        {
+          name: 'High Elf',
+          speed: 30,
+          bonusStats: {strength: 0, dexterity: 2, constitution: 0, intellect: 1, wisdom: 0, charisma: 0}
+        },
+        {
+          name: 'Wood Elf',
+          speed: 30,
+          bonusStats: {strength: 0, dexterity: 2, constitution: 0, intellect: 0, wisdom: 1, charisma: 0}
+        },
+        {
+          name: 'Drow Elf',
+          speed: 30,
+          bonusStats: {strength: 0, dexterity: 2, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}
+        },
       ]
     },
     {
       name: 'Gnome',
-      subRace:[
-        {name: 'Forest Gnome', speed: 25, bonusStats:{strength:0, dexterity: 1, constitution: 0, intellect: 2, wisdom: 0, charisma: 0}},
-        {name: 'Rock Gnome', speed: 25, bonusStats:{strength:0, dexterity: 0, constitution: 1, intellect: 2, wisdom: 0, charisma: 0}},
+      subRace: [
+        {
+          name: 'Forest Gnome',
+          speed: 25,
+          bonusStats: {strength: 0, dexterity: 1, constitution: 0, intellect: 2, wisdom: 0, charisma: 0}
+        },
+        {
+          name: 'Rock Gnome',
+          speed: 25,
+          bonusStats: {strength: 0, dexterity: 0, constitution: 1, intellect: 2, wisdom: 0, charisma: 0}
+        },
       ]
     },
     {
       name: 'Half-Elf',
-      subRace:[
-        {name: 'Half-Elf', speed: 30, bonusStats:{strength:0, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 2}},
+      subRace: [
+        {
+          name: 'Half-Elf',
+          speed: 30,
+          bonusStats: {strength: 0, dexterity: 0, constitution: 0, intellect: 0, wisdom: 0, charisma: 2}
+        },
       ]
     },
     {
       name: 'Half-Orc',
-      subRace:[
-        {name: 'Half-Orc', speed: 30, bonusStats:{strength:2, dexterity: 0, constitution: 1, intellect: 0, wisdom: 0, charisma: 0}},
+      subRace: [
+        {
+          name: 'Half-Orc',
+          speed: 30,
+          bonusStats: {strength: 2, dexterity: 0, constitution: 1, intellect: 0, wisdom: 0, charisma: 0}
+        },
       ]
     },
     {
       name: 'Halfling',
-      subRace:[
-        {name: 'Lightfoot Halfling', speed: 25, bonusStats:{strength:0, dexterity: 2, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}},
-        {name: 'Stout Halfling', speed: 25, bonusStats:{strength:0, dexterity: 2, constitution: 1, intellect: 0, wisdom: 0, charisma: 0}},
+      subRace: [
+        {
+          name: 'Lightfoot Halfling',
+          speed: 25,
+          bonusStats: {strength: 0, dexterity: 2, constitution: 0, intellect: 0, wisdom: 0, charisma: 1}
+        },
+        {
+          name: 'Stout Halfling',
+          speed: 25,
+          bonusStats: {strength: 0, dexterity: 2, constitution: 1, intellect: 0, wisdom: 0, charisma: 0}
+        },
       ]
     },
     {
       name: 'Human',
-      subRace:[
-        {name: 'Human', speed: 30, bonusStats:{strength:1, dexterity: 1, constitution: 1, intellect: 1, wisdom: 1, charisma: 1}},
+      subRace: [
+        {
+          name: 'Human',
+          speed: 30,
+          bonusStats: {strength: 1, dexterity: 1, constitution: 1, intellect: 1, wisdom: 1, charisma: 1}
+        },
       ]
     },
     {
       name: 'Tiefling',
-      subRace:[
-        {name: 'Tiefling', speed: 30, bonusStats:{strength:0, dexterity: 0, constitution: 1, intellect: 0, wisdom: 0, charisma: 2}},
+      subRace: [
+        {
+          name: 'Tiefling',
+          speed: 30,
+          bonusStats: {strength: 0, dexterity: 0, constitution: 1, intellect: 0, wisdom: 0, charisma: 2}
+        },
       ]
     },
   ];
 
-  constructor(private dialog: MatDialog, iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
+  constructor(private dialog: MatDialog,
+              private itemService: ItemServiceService,
+              iconRegistry: MatIconRegistry,
+              sanitizer: DomSanitizer) {
     iconRegistry.addSvgIconLiteral('spellbook', sanitizer.bypassSecurityTrustHtml(SPELLBOOK_SVG));
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.form.get('strength')?.setValue(this.minCharacteristicValue)
     this.form.get('dexterity')?.setValue(this.minCharacteristicValue)
     this.form.get('constitution')?.setValue(this.minCharacteristicValue)
@@ -351,7 +467,11 @@ export class CharacterCreationSheetComponent implements OnInit {
     this.generalInformation.get('initiative')?.setValue(this.getInitiativeValue())
     this.generalInformation.get('speed')?.setValue(this.getChosenRaceSpeed())
 
+    this.equipment.get('equipmentOptions')?.setValue('')
+
     this.dataSource = this.getSavingThrowsModifiers();
+    await this.getWeapons('Simple')
+    await this.getWeapons('Martial')
 
   }
 
@@ -384,8 +504,8 @@ export class CharacterCreationSheetComponent implements OnInit {
   }
 
   calculateModificator(characteristic: string, savingThrow?: boolean): number {
-    let currentModificatorValue: number= 0
-    if(savingThrow){
+    let currentModificatorValue: number = 0
+    if (savingThrow) {
       currentModificatorValue = this.characteristicWithRaceModifier(characteristic)
     } else {
       currentModificatorValue = this.form.get(characteristic)!.value
@@ -465,10 +585,10 @@ export class CharacterCreationSheetComponent implements OnInit {
     return characteristicValue - 1 < this.minCharacteristicValue
   }
 
-  characterHpHandler(): number{
+  characterHpHandler(): number {
     const characterClass: IClasses = this.generalInformation.get('characterClass')?.value
     const constitutionModifier = this.calculateModificator('constitution')
-    if(characterClass){
+    if (characterClass) {
       return characterClass.initialHp + constitutionModifier
     } else return 0
   }
@@ -476,7 +596,7 @@ export class CharacterCreationSheetComponent implements OnInit {
   getProficiencyBonusValue(): number {
     const characterLevel = this.generalInformation.get('level')?.value
     let proficiencyBonusValue: number = 0
-    switch (true){
+    switch (true) {
       case characterLevel === 1 || characterLevel === 2 || characterLevel === 3 || characterLevel === 4:
         proficiencyBonusValue = 2;
         break
@@ -505,7 +625,7 @@ export class CharacterCreationSheetComponent implements OnInit {
     return this.calculateModificator('dexterity');
   }
 
-  getSavingThrowsModifiers(): {characteristicName: string, savingThrowModifier: number}[] {
+  getSavingThrowsModifiers(): { characteristicName: string, savingThrowModifier: number }[] {
     return [
       {characteristicName: 'STR', savingThrowModifier: this.calculateModificator('strength', true)},
       {characteristicName: 'DEX', savingThrowModifier: this.calculateModificator('dexterity', true)},
@@ -523,7 +643,7 @@ export class CharacterCreationSheetComponent implements OnInit {
   openSpellbook(enterAnimationDuration: string, exitAnimationDuration: string) {
     let dialogRef: MatDialogRef<SpellbookComponent>;
     const data = this.generalInformation.value
-    if(this.generalInformation.valid){
+    if (this.generalInformation.valid) {
       dialogRef = this.dialog.open(SpellbookComponent, {
         data,
         enterAnimationDuration,
@@ -543,7 +663,7 @@ export class CharacterCreationSheetComponent implements OnInit {
     return characteristicValue + bonusCharacteristicValue
   }
 
-  getRaceModifier(race: string, characteristic: string): number{
+  getRaceModifier(race: string, characteristic: string): number {
     let selectedRaceBonusStats: IMainCharacteristics = {
       strength: 0,
       dexterity: 0,
@@ -554,7 +674,7 @@ export class CharacterCreationSheetComponent implements OnInit {
     };
     for (let i = 0; i < this.races.length; i++) {
       for (let j = 0; j < this.races[i].subRace.length; j++) {
-        if(this.races[i].subRace[j].name === race){
+        if (this.races[i].subRace[j].name === race) {
           selectedRaceBonusStats = this.races[i].subRace[j].bonusStats
         }
       }
@@ -564,5 +684,91 @@ export class CharacterCreationSheetComponent implements OnInit {
 
   setSelectedRace() {
     this.selectedRace = this.generalInformation.get('race')?.value
+  }
+
+  setSelectedClass() {
+    this.selectedClass = this.generalInformation.get('characterClass')?.value
+  }
+
+  async getClassItems() {
+    const chosenClass = this.generalInformation.get('characterClass')?.value
+    await new Promise<void>(resolve => {
+      const sub = this.itemService.getCharacterClassItems(chosenClass.name)
+        .subscribe({
+          next: (value => {
+            this.availableItems = value
+            this.displayEquipmentOptions()
+            sub.unsubscribe()
+            resolve()
+          }),
+          error: err => {
+            console.log(err)
+            sub.unsubscribe()
+            resolve()
+          }
+        })
+    })
+  }
+
+  displayEquipmentOptions(){
+    if(this.selectedClass.name === 'Barbarian'){
+      const optionA: IEquipment [] = []
+      console.log(this.getItemDescription("Greataxe"))
+      optionA.push({name: "Greataxe", description: this.getItemDescription("Greataxe"), value: 1}, {name: "Handaxe", description: this.getItemDescription("Handaxe"), value: 2})
+      const optionB: {simple: IWeapons[], martial:IWeapons[]} = this.weaponsArray
+      const nonOptionalEquip: IEquipment [] = [];
+      nonOptionalEquip.push({name: "Backpack", description: this.getItemDescription("Backpack"), value: 1},{name: "Bedroll", description: this.getItemDescription("Bedroll"), value: 1}, {name: "Mess kit", description: this.getItemDescription("Mess kit"), value: 1}, {name: "Torch", description: this.getItemDescription("Torch"), value: 10}, {name: "Ration", description: this.getItemDescription("Ration"), value: 10}, {name: "Rope", description: this.getItemDescription("Rope"), value: 50})
+
+      this.equipmentOptions = {optionA, optionB, nonOptionalEquip}
+      console.log(this.equipmentOptions)
+    } else {
+
+    }
+  }
+
+  getItemDescription(itemName: string | undefined): IWeapons | undefined{
+    if(this.weaponsArray.simple.length > 0 && this.weaponsArray.martial.length > 0){
+      const simpleItem = this.weaponsArray.simple.filter(item => item.name === itemName)
+      const martialItem = this.weaponsArray.martial.filter(item => item.name === itemName)
+      if(simpleItem.length > 0 && martialItem.length === 0){
+        return {
+          id: simpleItem[0].id,
+          rarity: simpleItem[0].rarity,
+          damage: JSON.parse(<string>simpleItem[0].damage),
+          damage_type: simpleItem[0].damage_type,
+          type: simpleItem[0].type,
+          subtype: simpleItem[0].subtype,
+          slots: simpleItem[0].slots,
+          description: simpleItem[0].description,
+          cost: simpleItem[0].cost
+        }
+      } else if (simpleItem.length === 0 && martialItem.length > 0){
+        return {
+          id: martialItem[0].id,
+          rarity: martialItem[0].rarity,
+          damage: JSON.parse(<string>martialItem[0].damage),
+          damage_type: martialItem[0].damage_type,
+          type: martialItem[0].type,
+          subtype: martialItem[0].subtype,
+          slots: martialItem[0].slots,
+          description: martialItem[0].description,
+          cost: martialItem[0].cost
+        }
+      } else return undefined
+    } else return undefined
+  }
+
+  async getWeapons(weaponSubtype: string){
+    await new Promise<void>(resolve => {
+      this.itemService.getWeapons(weaponSubtype)
+        .subscribe((value: IWeapons[]) => {
+          if(weaponSubtype === 'Simple'){
+            this.weaponsArray.simple = value
+          } else if (weaponSubtype === 'Martial'){
+            this.weaponsArray.martial = value
+          }
+          resolve()
+        })
+    })
   }
 }

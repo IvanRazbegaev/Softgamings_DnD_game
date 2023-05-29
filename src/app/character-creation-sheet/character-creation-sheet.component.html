@@ -20,7 +20,7 @@
   </mat-form-field>
   <mat-form-field appearance="outline">
     <mat-label>Character Class:</mat-label>
-    <mat-select formControlName="characterClass">
+    <mat-select formControlName="characterClass" (selectionChange)="getClassItems(); setSelectedClass();">
       <mat-option *ngFor="let charClass of classes" [value]="charClass">
         {{charClass.name}}
       </mat-option>
@@ -52,13 +52,13 @@
 
     <!-- Characteristic Column -->
     <ng-container matColumnDef="Characteristic">
-      <th mat-header-cell *matHeaderCellDef> Characteristic </th>
+      <th mat-header-cell *matHeaderCellDef> Characteristic</th>
       <td mat-cell *matCellDef="let element"> {{element.characteristicName}} </td>
     </ng-container>
 
     <!-- Modifier Column -->
     <ng-container matColumnDef="Modifier">
-      <th mat-header-cell *matHeaderCellDef> Modifier </th>
+      <th mat-header-cell *matHeaderCellDef> Modifier</th>
       <td mat-cell *matCellDef="let element"> {{element.savingThrowModifier}} </td>
     </ng-container>
 
@@ -279,4 +279,27 @@
            [value]="calculateModificator('charisma')">
   </mat-form-field>
 </form>
+
+<ng-container *ngIf="selectedClass.name">
+  <h2>Equipment</h2>
+  <mat-radio-group>
+    <p>
+      <mat-radio-button>A <a href="" matTooltip="{{getItemDescription('Greataxe')?.description}}">Greataxe</a>, 2x <a href="" matTooltip="{{getItemDescription('Handaxe')}}">Handaxes</a>
+      </mat-radio-button>
+    </p>
+    <p>
+      <mat-radio-button>
+        <mat-label>Any martial weapon:</mat-label>
+        <mat-select >
+          <mat-option *ngFor="let martialWeapon of weaponsArray.martial" [value]="martialWeapon"><a href="" matTooltip="{{getItemDescription(martialWeapon.name) | itemDescription: 'description'}}">{{martialWeapon | itemDescription: 'name'}}</a></mat-option>
+        </mat-select>
+        <mat-label>Any simple weapon:</mat-label>
+        <mat-select>
+          <mat-option *ngFor="let simpleWeapon of weaponsArray.simple" [value]="simpleWeapon"><a href="" matTooltip="{{getItemDescription(simpleWeapon.name) | itemDescription: 'description'}}">{{simpleWeapon | itemDescription: 'name'}}</a></mat-option>
+        </mat-select>
+      </mat-radio-button>
+    </p>
+    An Explorer’s Pack and 4x Javelins
+  </mat-radio-group>
+</ng-container>
 
